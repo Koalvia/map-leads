@@ -2,12 +2,13 @@
 // This should ONLY be used in API routes and server components
 
 import { cookies } from "next/headers"
+import { backend } from "@/lib/backend"
 
 /**
  * API Client Configuration
  */
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
-const API_KEY = process.env.NEXT_PUBLIC_API_KEY || "some-api-key"
+const API_BASE_URL = backend.url
+const API_KEY = backend.apiKey
 
 /**
  * Custom error class for API errors

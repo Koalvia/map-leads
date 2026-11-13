@@ -44,8 +44,8 @@ cp backend/.env.example backend/.env
 ```bash
 # Create frontend/.env file
 cat > frontend/.env << EOF
-NEXT_PUBLIC_API_URL=http://api:8000
-NEXT_PUBLIC_API_KEY=your-api-key-here
+API_URL=http://api:8000
+API_KEY=your-api-key-here
 NODE_ENV=production
 EOF
 ```
@@ -76,7 +76,7 @@ docker-compose exec api python scripts/create_api_client.py --name "frontend"
 **Important**: Copy the API key from the output and update `frontend/.env`:
 
 ```bash
-NEXT_PUBLIC_API_KEY=your-actual-api-key-here
+API_KEY=your-actual-api-key-here
 ```
 
 Then restart the frontend:
@@ -190,8 +190,9 @@ Key variables:
 
 #### Frontend (`frontend/.env`)
 
-- `NEXT_PUBLIC_API_URL` - Backend API URL (use `http://api:8000` in Docker)
-- `NEXT_PUBLIC_API_KEY` - API key for backend authentication
+- `API_URL` - Backend API URL (use `http://api:8000` in Docker)
+- `API_KEY` - API key for backend authentication. Server-side only: never
+  rename it to `NEXT_PUBLIC_*`, which would ship it to every browser
 - `NEXT_PUBLIC_APP_URL` - Public origin of this app as the browser reaches it
   (e.g. `http://localhost:3000` locally, `https://mapleads.koalvia.com` in
   prod). Used to build absolute redirect URLs (e.g. the OAuth callback).
@@ -240,7 +241,7 @@ All requests to the backend API require an API key. The frontend automatically i
 
 2. **Update frontend/.env**:
    ```bash
-   NEXT_PUBLIC_API_KEY=your-api-key-here
+   API_KEY=your-api-key-here
    ```
 
 3. **Restart frontend**:
@@ -301,13 +302,14 @@ VPS state):
 1. Create `~/map-leads/backend/.env` and `~/map-leads/frontend/.env` on the
    server with production secrets (`SECRET_KEY`, `POSTGRES_PASSWORD`,
    `DATABASE_URL`, `CORS_ORIGINS`, `FRONTEND_URL`, Stripe/OAuth/Google keys,
-   etc.) — these are never committed.
+   etc.) — these are never committed. `frontend/.env` holds `API_URL`
+   (`http://api:8000`) and `API_KEY` (from `scripts/create_api_client.py`):
+   the Next.js server reads them at runtime and they never reach the browser.
 2. Add `mapleads.koalvia.com { reverse_proxy map-leads-caddy:80 }` to the VPS's
    entry Caddyfile (`Koalvia/infra`) and point DNS at the VPS.
 3. In this repo's GitHub settings, create a `PROD` environment with secrets
    `SERVER_IP`, `SSH_USERNAME`, `SSH_PRIVATE_KEY`, `CR_PAT` (GHCR pull token),
-   plus the frontend build-time vars `NEXT_PUBLIC_API_URL` (`http://api:8000`),
-   `NEXT_PUBLIC_API_KEY`, `NEXT_PUBLIC_APP_URL` (the public origin, e.g.
+   plus the frontend build-time vars `NEXT_PUBLIC_APP_URL` (the public origin, e.g.
    `https://mapleads.koalvia.com` — used to build absolute redirect URLs in
    OAuth routes; must NOT be derived from the request at runtime, since the
    standalone server ignores `Host`/`X-Forwarded-Host`), `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`,
