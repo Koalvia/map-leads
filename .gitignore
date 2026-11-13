@@ -113,9 +113,6 @@ coverage/
 *.cover
 .hypothesis/
 
-# Docker
-.dockerignore
-
 # Misc
 *.pid
 *.seed

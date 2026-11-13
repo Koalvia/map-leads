@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { cookies } from "next/headers"
+import { backend } from "@/lib/backend"
 import { config } from "@/lib/config"
 
 type RouteContext = { params: Promise<{ id: string }> }
@@ -45,14 +46,14 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
       )
     }
 
-    const url = `${config.api.baseUrl}${config.api.endpoints.backend.projects.leadsExport(
+    const url = `${backend.url}${config.api.endpoints.backend.projects.leadsExport(
       id,
     )}?${query.toString()}`
 
     const response = await fetch(url, {
       method: "GET",
       headers: {
-        "x-api-key": config.api.apiKey,
+        "x-api-key": backend.apiKey,
         Authorization: `Bearer ${token}`,
       },
     })

@@ -1,0 +1,9 @@
+# Installed and built inside the image, never copied from the host
+node_modules
+.next
+*.tsbuildinfo
+
+# Secrets stay out of the image; the container gets them from env_file
+.env
+.env.*
+!.env.example

@@ -18,11 +18,11 @@ Create a `.env` file in the frontend directory:
 # Use 'http://api:8000' if backend is in same Docker network (root docker-compose)
 # Use 'http://host.docker.internal:8000' if backend is running on host machine
 # Use 'http://localhost:8000' if backend is accessible via localhost
-NEXT_PUBLIC_API_URL=http://host.docker.internal:8000
+API_URL=http://host.docker.internal:8000
 
 # API Key (required - get it from the backend)
 # Create one with: docker-compose exec api python scripts/create_api_client.py --name "frontend"
-NEXT_PUBLIC_API_KEY=your-api-key-here
+API_KEY=your-api-key-here
 
 # Node Environment
 NODE_ENV=development
@@ -35,7 +35,7 @@ NODE_ENV=development
 docker-compose up
 ```
 
-This will start only the frontend service. Make sure your backend API is accessible at the URL specified in `NEXT_PUBLIC_API_URL`.
+This will start only the frontend service. Make sure your backend API is accessible at the URL specified in `API_URL`.
 
 ### 3. Access the Application
 
@@ -47,8 +47,8 @@ This will start only the frontend service. Make sure your backend API is accessi
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `NEXT_PUBLIC_API_URL` | Backend API URL | `http://host.docker.internal:8000` |
-| `NEXT_PUBLIC_API_KEY` | API key for backend authentication | Required |
+| `API_URL` | Backend API URL | `http://host.docker.internal:8000` |
+| `API_KEY` | API key for backend authentication | Required |
 | `NODE_ENV` | Node environment | `development` |
 | `FRONTEND_PORT` | Port to expose | `3000` |
 | `FRONTEND_BUILD_TARGET` | Docker build target | `development` |
@@ -59,9 +59,9 @@ If your backend is running separately (e.g., on your host machine or another Doc
 
 ```bash
 # In .env file
-NEXT_PUBLIC_API_URL=http://host.docker.internal:8000
+API_URL=http://host.docker.internal:8000
 # or
-NEXT_PUBLIC_API_URL=http://localhost:8000
+API_URL=http://localhost:8000
 ```
 
 ### Connecting to Root Docker Compose Network
@@ -150,9 +150,9 @@ This will use the shared network and can communicate with backend services.
 ### Frontend can't connect to backend
 
 1. **Check backend is running**: `curl http://localhost:8000/api/v1/health`
-2. **Verify API URL**: Check `NEXT_PUBLIC_API_URL` in `.env`
+2. **Verify API URL**: Check `API_URL` in `.env`
 3. **Check network**: If using Docker, ensure services are on the same network
-4. **Verify API key**: Make sure `NEXT_PUBLIC_API_KEY` is set correctly
+4. **Verify API key**: Make sure `API_KEY` is set correctly
 
 ### Port already in use
 

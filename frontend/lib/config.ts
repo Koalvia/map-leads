@@ -12,9 +12,8 @@ export const config = {
     url: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
   },
   api: {
-    // Real backend API configuration
-    baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000",
-    apiKey: process.env.NEXT_PUBLIC_API_KEY || "PI1u-i-6i2pGeIi9q6OOaYYLc7BnjCHzJ58m0NEaIrM",
+    // The backend's URL and API key are server-only: see lib/backend.ts. This
+    // file is imported by client components, so it must not hold secrets.
     endpoints: {
       // Backend API endpoints (v1)
       backend: {
