@@ -22,7 +22,7 @@ A SaaS platform for agencies to generate and manage local business leads from Go
 
 ```bash
 git clone <repository-url>
-cd craze_dashboard
+cd map-leads
 ```
 
 ### 2. Set Up Environment Variables
