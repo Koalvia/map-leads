@@ -161,6 +161,49 @@ docker-compose exec db psql -U postgres -d map_leads_db
 docker-compose exec api alembic upgrade head
 ```
 
+### Reset the Local Database
+
+Local Postgres data lives in the named Docker volume `pgdata`, mounted at `/var/lib/postgresql/data` on the `db` service (see `docker-compose.yml`). Wiping the database means removing that volume.
+
+> ⚠️ **This permanently deletes all local database data** (users, API keys and everything else). `-v` also removes the other named volumes in `docker-compose.yml`: `pip_cache`, `caddy_data` and `caddy_config`.
+
+```bash
+# Stop the stack and remove containers and named volumes
+docker-compose down -v
+
+# Start again with an empty database
+docker-compose up -d
+```
+
+**Migrations** are re-applied automatically: the `api` service sets `RUN_MIGRATIONS=1` in `docker-compose.yml`, and `backend/entrypoint.sh` runs `alembic upgrade head` when that variable is `1`, so the schema is created each time the `api` container starts. To run or check them by hand:
+
+```bash
+# Apply migrations manually
+docker-compose exec api alembic upgrade head
+
+# Show the current revision
+docker-compose exec api alembic current
+```
+
+**Recreate the frontend API key.** API keys are stored in the database (`api_clients` table), so the reset deletes the frontend's key. Create a new one, update `API_KEY` in `frontend/.env`, then restart the frontend (details in [🔐 API Key Setup](#-api-key-setup)):
+
+```bash
+docker-compose exec api python scripts/create_api_client.py --name "frontend"
+docker-compose restart frontend
+```
+
+User accounts are gone too, so users must sign up again.
+
+Optionally, verify the reset:
+
+```bash
+# List the tables created by the migrations
+docker-compose exec db psql -U postgres -d map_leads_db -c '\dt'
+
+# Check the API is healthy
+curl http://localhost:8000/api/v1/health
+```
+
 ### Stop Services
 
 ```bash
@@ -302,6 +345,7 @@ Caveats:
 
 ### Rebuild everything
 
+This wipes the local database; see [Reset the Local Database](#reset-the-local-database) for the follow-up steps.
 ```bash
 docker-compose down -v
 docker-compose build --no-cache
