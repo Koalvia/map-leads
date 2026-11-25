@@ -53,7 +53,10 @@ jobs:
           # non-human actor"); allow our own bot so its PRs get reviewed. Scoped to
           # `claude` rather than `*` to keep least privilege — the reviewer is already
           # read-only (`contents: read`), so this only widens *who* it reviews.
-          allowed_bots: "claude"
+          # `kelpie-koalvia-dev` is the Kelpie GitHub App, which opens PRs from
+          # `kelpie/task-<id>` branches; without it the action refuses those PRs and
+          # the gate fails closed with no verdict.
+          allowed_bots: "claude,kelpie-koalvia-dev"
           # Force tag mode with a tracking comment so the review is posted on the PR.
           track_progress: true
           prompt: |
