@@ -95,21 +95,18 @@ docker-compose restart frontend
 ## 📁 Project Structure
 
 ```
-craze_dashboard/
-├── backend/              # FastAPI backend
-│   ├── app/              # Application code
-│   ├── alembic/         # Database migrations
-│   ├── scripts/          # Utility scripts
-│   ├── Dockerfile        # Backend Docker image
-│   └── docker-compose.yml # Backend-only compose (legacy)
-├── frontend/             # Next.js frontend
-│   ├── app/              # Next.js app directory
-│   ├── components/       # React components
-│   ├── features/         # Feature modules
-│   ├── lib/              # Utilities and API client
-│   └── Dockerfile        # Frontend Docker image
-├── docker-compose.yml    # Root-level compose (all services)
-└── README.md            # This file
+map-leads/
+├── .claude/                 # Agent definitions (planner, implementer, reviewer) for the AI pipeline
+├── .github/                 # CI and agent workflows, Slack-notify composite action, issue template
+├── backend/                 # FastAPI (Python 3.12) REST API: domain code, Alembic migrations, tests, Celery worker, scripts
+├── caddy/                   # Caddyfile for the internal Caddy reverse proxy of the production stack
+├── design/                  # Committed design references for UI work (design/refs/<key>/)
+├── docs/                    # Project documentation (pipeline, backlog, blog posts)
+├── frontend/                # Next.js 16 web app (App Router, React 19, TypeScript, Tailwind 4), managed with pnpm
+├── CLAUDE.md                # Conventions for AI agents and contributors
+├── docker-compose.yml       # Full local stack (all services)
+├── docker-compose.prod.yml  # Production stack
+└── README.md                # This file
 ```
 
 ## 🛠️ Development
