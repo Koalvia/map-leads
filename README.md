@@ -197,7 +197,7 @@ Key variables:
 
 ### Ports
 
-Default ports (can be overridden in `.env`):
+Default host ports (override with `FRONTEND_PORT`, `API_PORT`, `DB_PORT`, `REDIS_PORT` in a root-level `.env` next to `docker-compose.yml`; see [Port already in use](#port-already-in-use)):
 - Frontend: `3000`
 - Backend API: `8000`
 - PostgreSQL: `5432`
@@ -263,11 +263,36 @@ All requests to the backend API require an API key. The frontend automatically i
 
 ### Port already in use
 
-Change ports in `.env` or `docker-compose.yml`:
-```yaml
-ports:
-  - "3001:3000"  # Use port 3001 instead of 3000
+`docker-compose up` fails with `Bind for 0.0.0.0:5432 failed: port is already allocated` or `address already in use`. The port in the message is the host port that failed.
+
+Find what is using the port (replace `<port>`):
+```bash
+lsof -i :<port>                          # macOS/Linux (or: sudo lsof -iTCP:<port> -sTCP:LISTEN)
+ss -ltnp | grep <port>                   # Linux
+netstat -ano | findstr :<port>           # Windows, then: tasklist /FI "PID eq <pid>"
+docker ps --filter "publish=<port>"      # another container
 ```
+
+Then either stop the conflicting process or container (e.g. a locally installed Postgres or Redis service), or change the host port MapLeads uses. These Docker Compose variables change only the host side of each mapping:
+
+| Variable | Default | Service |
+|----------|---------|---------|
+| `FRONTEND_PORT` | `3000` | frontend |
+| `API_PORT` | `8000` | api |
+| `DB_PORT` | `5432` | db |
+| `REDIS_PORT` | `6379` | redis |
+| `ADMINER_PORT` | `8080` | adminer (`tools` profile only) |
+
+Set them in a `.env` file in the repository root, next to `docker-compose.yml`, or inline. They are **not** read from `backend/.env` or `frontend/.env`.
+```bash
+API_PORT=8001 docker-compose up -d       # inline, one-off
+echo "DB_PORT=5433" >> .env              # persistent, in the root .env
+```
+
+Caveats:
+- Containers still talk to each other on the internal ports, so `API_URL=http://api:8000` and the compose `DATABASE_URL` do not change.
+- After changing `FRONTEND_PORT` or `API_PORT`, use the new host port in the browser and host-side commands (e.g. `curl http://localhost:<API_PORT>/api/v1/health`), and update `NEXT_PUBLIC_APP_URL` in `frontend/.env` if it points at `localhost:3000`.
+- The `production` profile's Caddy binds `80`/`443`; those are not configurable through variables.
 
 ### Database connection issues
 
