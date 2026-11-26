@@ -109,6 +109,8 @@ map-leads/
 └── README.md                # This file
 ```
 
+See [CLAUDE.md](CLAUDE.md) for the coding conventions used across this repository.
+
 ## 🛠️ Development
 
 ### Development Mode
